@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Button } from "@material-ui/core";
 import { ConnextModal } from "@connext/vector-modal";
 import "./App.css";
 
@@ -8,13 +9,13 @@ function App() {
     <div className="App">
       <header>Demo</header>
 
-      <button
+      <Button
         onClick={() => {
           setShowModal(true);
         }}
       >
         Show Modal
-      </button>
+      </Button>
       <ConnextModal
         showModal={showModal}
         onClose={() => setShowModal(false)}
