@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@connext/vector-modal": "1.0.3-beta.6",
+    "@connext/vector-modal": "1.0.3-beta.7",
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
     "@material-ui/core": "^5.0.0-alpha.26",
