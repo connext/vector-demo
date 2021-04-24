@@ -8,9 +8,9 @@
     "build": "parcel build index.html"
   },
   "dependencies": {
-    "@connext/vector-sdk": "0.0.1-beta.2",
-    "ethers": "^5.0.32",
-    "parcel-bundler": "^1.6.1"
+    "@connext/vector-sdk": "0.0.1-beta.8",
+    "ethers": "^5.1.3",
+    "parcel-bundler": "^1.12.5"
   },
   "devDependencies": {
     "@babel/core": "7.2.0"
