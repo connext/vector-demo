@@ -1,7 +1,7 @@
 import "./styles.css";
 import "regenerator-runtime/runtime";
-import { providers, BigNumber, utils, constants, Contract } from "ethers";
-import { ConnextSdk, ERC20Abi } from "@connext/vector-sdk";
+import { providers } from "ethers";
+import { ConnextSdk } from "@connext/vector-sdk";
 
 const connextSdk = new ConnextSdk();
 const webProvider = new providers.Web3Provider(window.ethereum);
@@ -30,7 +30,7 @@ async function init() {
 async function getEstimatedFee(input) {
   try {
     const res = await connextSdk.estimateFees({
-      input: input,
+      transferAmount: input,
     });
     console.log(res);
   } catch (e) {
@@ -39,40 +39,17 @@ async function getEstimatedFee(input) {
   }
 }
 
-async function preTransferCheck(input) {
+async function deposit(transferAmount) {
+  const address = await webProvider.getSigner().getAddress();
+  console.log(address);
   try {
-    await connextSdk.preTransferCheck(input);
-  } catch (e) {
-    console.log("Error at preCheck", e);
-  }
-}
-
-async function deposit(input) {
-  const transferAmountBn = BigNumber.from(
-    utils.parseUnits(input, connextSdk.senderChain.assetDecimals)
-  );
-  console.log(transferAmountBn);
-
-  try {
-    const signer = webProvider.getSigner();
-    const depositAddress = connextSdk.senderChainChannelAddress;
-
-    const depositTx =
-      connextSdk.senderChain.assetId === constants.AddressZero
-        ? await signer.sendTransaction({
-            to: depositAddress,
-            value: transferAmountBn,
-          })
-        : await new Contract(
-            connextSdk.senderChain.assetId,
-            ERC20Abi,
-            signer
-          ).transfer(depositAddress, transferAmountBn);
-
-    console.log("depositTx", depositTx.hash);
-
-    const receipt = await depositTx.wait(1);
-    console.log("deposit mined:", receipt.transactionHash);
+    await connextSdk.deposit({
+      transferAmount,
+      webProvider,
+      onDeposited: function (params) {
+        console.log("On deposit ==>", params);
+      }, // onFinished callback function
+    });
   } catch (e) {
     console.log("Error during deposit", e);
   }
@@ -125,8 +102,6 @@ document.getElementById("deposit").addEventListener("click", async function () {
   var inputVal = document.getElementById("amount").value;
   // Displaying the value
   console.log(inputVal);
-  await preTransferCheck(inputVal);
-
   await deposit(inputVal);
 });
 
