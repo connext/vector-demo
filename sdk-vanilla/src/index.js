@@ -4,8 +4,14 @@ import { providers } from "ethers";
 import { ConnextSdk } from "@connext/vector-sdk";
 
 const connextSdk = new ConnextSdk();
-const webProvider = new providers.Web3Provider(window.ethereum);
-
+let webProvider; 
+let transferQuote = {};
+window.onload = async () => {
+  if (typeof  window.ethereum !== undefined) {
+    await window.ethereum.enable()
+    webProvider = new providers.Web3Provider(window.ethereum);
+  }
+}
 async function init() {
   const network = await webProvider.getNetwork();
   console.log(network);
@@ -32,6 +38,7 @@ async function getEstimatedFee(input) {
     const res = await connextSdk.estimateFees({
       transferAmount: input,
     });
+    transferQuote = res.transferQuote;
     console.log(res);
   } catch (e) {
     const message = "Error Estimating Fees";
@@ -59,6 +66,7 @@ async function crossChainSwap(withdrawalAddress) {
   try {
     await connextSdk.crossChainSwap({
       recipientAddress: withdrawalAddress, // Recipient Address
+      transferQuote:transferQuote,
       onFinished: function (params) {
         console.log("On finish ==>", params);
       }, // onFinished callback function
